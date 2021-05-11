@@ -34,8 +34,7 @@
     become: yes
     tags: [always]
     when: 
-      - ansible_facts['distribution'] == "Ubuntu"
-      - ansible_facts['distribution_major_version'] | int >= 20
+      - ansible_os_family == 'Debian'
     apt:
       pkg:
       - tmux
@@ -46,4 +45,34 @@
       update_cache: yes
       autoclean: yes
       autoremove: yes
+
+
+- name: Changing lid behavior of servers
+  hosts: servers
+  roles:
+    - ansible-modules-bitwarden
+  gather_facts: no
+  tasks:
+
+  - name: Disable suspend on laptop lid close
+    become: yes
+    tags: [never, new]
+    when: 
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_facts['distribution_major_version'] | int >= 20
+    lineinfile:
+      path: "/etc/systemd/logind.conf"
+      state: present
+      regexp: "^HandleLidSwitch="
+      line: "HandleLidSwitch=ignore"
+
+  - name: Restart service systemd-logind
+    become: yes
+    when: 
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_facts['distribution_major_version'] | int >= 20
+    tags: [never, new]
+    service:
+      name: systemd-logind
+      state: restarted
 
