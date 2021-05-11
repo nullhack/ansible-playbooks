@@ -1,0 +1,4 @@
+- src: git+https://github.com/nullhack/ansible-modules-bitwarden
+  version: master
+  name: ansible-modules-bitwarden
+
