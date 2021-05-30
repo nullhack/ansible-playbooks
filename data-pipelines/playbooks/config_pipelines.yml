@@ -1,0 +1,76 @@
+- name: Instaling and configuring Postgres on docker
+  become: yes
+  hosts: all
+  tags: [sql, postgres, db, new]
+  roles: [ansible-modules-bitwarden]
+  gather_facts: yes
+  tasks:
+
+  - name: Remove postgres
+    tags: [never, new]
+    docker_container:
+      name: postgres
+      force_kill: yes
+      state: absent
+
+  - name: Remove the volume postgresql_data
+    tags: [never, new]
+    docker_volume:
+      name: postgresql_data
+      state: absent
+
+  - name: Install postgres
+    no_log: true
+    docker_container:
+      name: postgres
+      image: docker.io/bitnami/postgresql:13
+      state: started
+      recreate: yes
+      env:
+        POSTGRESQL_USERNAME: "{{ postgres_admin_user }}"
+        POSTGRESQL_PASSWORD: "{{ postgres_admin_pass }}"
+        POSTGRESQL_DATABASE: "{{ postgres_admin_db }}"
+      ports:
+      - "5432:5432"
+      volumes:
+      - "postgresql_data:/bitnami/postgresql"
+
+  - name: Copy local set_default_roles.sql to host
+    ansible.builtin.copy:
+      src: ../extra/set_default_roles.sql
+      dest: /tmp/set_default_roles.sql
+
+  - name: Copy set_default_roles.sql to container
+    shell: "docker cp /tmp/set_default_roles.sql postgres:/tmp/set_default_roles.sql"
+
+  - name: Delete temp file
+    file:
+      path: "/tmp/set_default_roles.sql"
+      state: absent
+
+  - name: Execute set_default_roles.sql in host docker
+    no_log: true
+    shell: "docker exec -e PGPASSWORD='{{ postgres_admin_pass }}' --user root postgres bash -c 'psql -U postgres -f /tmp/set_default_roles.sql'"
+
+- name: Instaling and configuring redis on docker
+  become: yes
+  hosts: all
+  tags: [nosql, redis, db, new]
+  roles: [ansible-modules-bitwarden]
+  gather_facts: yes
+  tasks:
+
+  - name: Install redis
+    no_log: true
+    docker_container:
+      name: redis
+      image: docker.io/bitnami/redis:6.2
+      state: started
+      recreate: yes
+      env:
+        REDIS_PASSWORD: password
+      ports:
+      - "6379:6379"
+      volumes:
+      - "redis_data:/bitnami/redis/data"
+
