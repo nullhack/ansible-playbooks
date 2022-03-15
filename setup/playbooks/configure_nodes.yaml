@@ -41,6 +41,11 @@
       - vim
       - python3
       - python3-pip
+      - steghide
+      - gnupg2
+      - tomb
+      - pass
+      - xclip
       state: latest
       update_cache: yes
       autoclean: yes
@@ -65,7 +70,7 @@
       state: present
       regexp: "^HandleLidSwitch="
       line: "HandleLidSwitch=ignore"
-
+ 
   - name: Restart service systemd-logind
     become: yes
     when: 
@@ -75,4 +80,4 @@
     service:
       name: systemd-logind
       state: restarted
-
+ 
