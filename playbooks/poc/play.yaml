@@ -1,0 +1,15 @@
+- name: Instaling and configuring Postgres on docker
+  become: yes
+  hosts: all
+  tags: [sql, postgres, db, new]
+  roles: [ansible-modules-bitwarden]
+  gather_facts: no
+  vars:
+    variablename: hello
+    myvar: "{{ password_id }}"
+  tasks:
+
+  - name: Show value of 'variablename'
+    debug: msg="{{ ansible_host }} - {{ myvar }} - {{ variablename }} - {{ lookup('bitwarden', password_id, field='username') | default('NO_VALUE') }}"
+
+
