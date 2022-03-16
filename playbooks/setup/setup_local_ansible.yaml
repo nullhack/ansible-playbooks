@@ -1,7 +1,7 @@
 - name: Setting up local ansible 
   hosts: localhost
   connection: local
-  gather_facts: yes 
+  gather_facts: yes
   tasks:
 
   - name: Install basic aptitude dependencies
@@ -28,8 +28,8 @@
     become: yes
     tags: [always]
     when: 
-      - ansible_facts['distribution'] == "Ubuntu"
-      - ansible_facts['distribution_major_version'] | int >= 20
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_major_version | int >= 20
     snap:
       name: bw
 

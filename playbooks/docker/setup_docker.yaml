@@ -1,0 +1,24 @@
+- name: Setting up docker
+  hosts: all
+  roles:
+    - ansible-modules-bitwarden
+  gather_facts: yes
+  tasks:
+
+  - name: "Checking hosts ({{ deploy_environment }})" 
+    tags: [never, check]
+    ping:
+
+  - name: Installing docker
+    become: yes
+    tags: [always]
+    when:
+      - ansible_os_family == 'Debian'
+    apt:
+      pkg:
+      - docker-compose
+      state: latest
+      update_cache: yes
+      autoclean: yes
+      autoremove: yes
+

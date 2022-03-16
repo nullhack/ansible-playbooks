@@ -47,8 +47,8 @@
     become: yes
     tags: [never, new]
     when: 
-      - ansible_facts['distribution'] == "Ubuntu"
-      - ansible_facts['distribution_major_version'] | int >= 20
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_major_version | int >= 20
     lineinfile:
       path: "/etc/systemd/logind.conf"
       state: present
@@ -58,8 +58,8 @@
   - name: Restart service systemd-logind
     become: yes
     when: 
-      - ansible_facts['distribution'] == "Ubuntu"
-      - ansible_facts['distribution_major_version'] | int >= 20
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_major_version | int >= 20
     tags: [never, new]
     service:
       name: systemd-logind
