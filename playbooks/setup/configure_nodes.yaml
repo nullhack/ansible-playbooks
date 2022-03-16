@@ -1,33 +1,17 @@
-- name: Changing passwords of new hosts
-  hosts: all
-  roles:
-    - ansible-modules-bitwarden
-  gather_facts: no
-  tasks:
-
-  - name: Change user password
-    become: yes
-    tags: [never, new]
-    vars:
-      tmp_password: "{{ lookup('env', 'tmp_' + password_id) }}"
-      ansible_password: "{{ tmp_password }}"
-      ansible_become_pass: "{{ tmp_password }}"
-    when: tmp_password != ''
-    user:
-      name: "{{ ansible_user }}"
-      update_password: always
-      password: "{{ ansible_reset_pass | password_hash('sha512') }}"
+- name: Changing nodes password
+  # In case tmp_${host_id} is defined, changes the password using bw
+  import_playbook: change_password.yaml
 
 
-- name: Configuring new hosts 
+- name: Configuring nodes
   hosts: all
   roles:
     - ansible-modules-bitwarden
   gather_facts: yes 
   tasks:
 
-  - name: "Checking hosts ({{ env }})" 
-    tags: [checks]
+  - name: "Checking hosts ({{ deploy_environment }})" 
+    tags: [check]
     ping:
 
   - name: Install basic packages common to all hosts

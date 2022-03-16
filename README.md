@@ -19,6 +19,14 @@ ansible-playbook -i hosts/hosts.yaml playbooks/setup/configure_nodes.yaml --tags
 export DEPLOY_ENVIRONMENT=prod
 export ANSIBLE_HOST_KEY_CHECKING=False
 
-ansible-playbook --inventory hosts/hosts.yaml playbooks/setup/configure_nodes.yaml --tags new --limit "n0"
+ansible-playbook playbooks/setup/setup_local_ansible.yaml --ask-become-pass
+
+bw login
+
+# export BW_SESSION
+
+bw sync
+
+ansible-playbook --inventory hosts/hosts.yaml playbooks/setup/configure_nodes.yaml --tags new --limit n0
 
 ```

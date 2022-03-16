@@ -34,4 +34,4 @@
       name: bw
 
   - name: Install roles from Ansible Galaxy
-    command: ansible-galaxy install -r setup_local_ansible_requirements.yaml
+    command: ansible-galaxy install -r setup_local_ansible/requirements.yaml
