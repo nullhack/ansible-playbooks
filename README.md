@@ -14,3 +14,11 @@ Install bw client, run 'bw login', or 'bw unlock' and set the BW_SESSION environ
 ```bash
 ansible-playbook -i hosts.yml setup/playbooks/configure_nodes.yaml --tags new
 ```
+
+```bash
+export DEPLOY_ENVIRONMENT=prod
+export ANSIBLE_HOST_KEY_CHECKING=False
+
+ansible-playbook --inventory setup/hosts.yaml setup/playbooks/configure_nodes.yaml --tags new --limit "n0"
+
+```
